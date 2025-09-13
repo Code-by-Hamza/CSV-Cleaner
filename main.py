@@ -8,9 +8,6 @@ def clean_csv(input_file,output_csv="cleaned.csv",output_json="cleaned.json"):
         filepath = os.path.join(script_dir, input_file)
         df = pd.read_csv(filepath)
 
-        # Drop duplicates
-        df = df.drop_duplicates()
-
         # Strip spaces
         df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
 
@@ -26,7 +23,10 @@ def clean_csv(input_file,output_csv="cleaned.csv",output_json="cleaned.json"):
             # Sort
             df.sort_values(by='date', inplace=True)
             # Format
-            df["date"] = df["date"].dt.strftime('%d-%m-%y')
+            df["date"] = df["date"].dt.strftime('%d-%m-%Y')
+        
+        # Drop duplicates
+        df = df.drop_duplicates(subset=['name','city','age'])
 
         # Save cleaned file
         csvfile = os.path.join(script_dir, output_csv)
@@ -55,6 +55,10 @@ def summary(input_file,output="summary.json"):
     average = df.mean(numeric_only=True).round(2)
     minimum = df.min(numeric_only=True)
     maximum = df.max(numeric_only=True)
+    city = df['city'].value_counts()
+    age = df['age'].value_counts(normalize=True).round(2)
+    gender = df['gender'].value_counts()
+    
     print("----Quick Summary----")
     print(f"➡  Number of Rows:\n   {rows}")
     print("➡  Average values:")
@@ -66,6 +70,18 @@ def summary(input_file,output="summary.json"):
     print(f"➡  Minimum Values:")
     for col, val in minimum.items():
         print(f"   {col}:    {val}")
+    if "age" in df.columns:
+        print(f"➡  Age percentage:")
+        for col, val in age.items():
+            print(f"   {col}:    {val} %")
+    if "gender" in df.columns:
+        print(f"➡  Genders:")
+        for col, val in gender.items():
+            print(f"   {col}:    {val}")
+    if "city" in df.columns:
+        print(f"➡  People in each city")
+        for col, val in city.items():
+            print(f"   {col}:       {val}")
     print("-" * 21)
 
     summary_data = {
@@ -74,6 +90,12 @@ def summary(input_file,output="summary.json"):
         "minimum": minimum.to_dict(),
         "maximum": maximum.to_dict()
     }
+    if "city" in df.columns:
+        summary_data["city"] = city.to_dict()
+    if "age" in df.columns:
+        summary_data["age"] = age.to_dict()
+    if "gender" in df.columns:
+        summary_data["gender"] = gender.to_dict()
     summary_file = os.path.join(script_dir, output)
     with open(summary_file, "w") as f:
         json.dump(summary_data, f, indent=4)

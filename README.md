@@ -1,16 +1,17 @@
-
 # CSV Cleaner
 
-A simple Python script to clean and format CSV files. It removes duplicates, trims spaces, capitalizes string columns (except dates), parses and formats dates, sorts by date, and saves the cleaned data as both CSV and JSON. It also prints a quick summary and saves it as `summary.json`.
+A simple Python script to clean and format CSV files. It removes duplicates, trims spaces, capitalizes string columns (except dates), parses and formats dates, sorts by date, and saves the cleaned data as both CSV and JSON. It also prints a quick summary and saves it as `summary.json`. Summary fields for city, age, and gender are only included if those columns exist in your CSV.
+
 
 ## Features
 - Removes duplicate rows
 - Trims leading/trailing spaces from all fields
 - Capitalizes string columns (except 'date')
-- Parses various date formats and standardizes them to `DD-MM-YY`
+- Parses various date formats and standardizes them to `DD-MM-YYYY`
 - Sorts data by date (if present)
 - Outputs cleaned data to CSV and JSON files
 - Prints and saves a quick summary of numeric columns
+- If columns 'city', 'age', or 'gender' exist, their value counts are included in the summary
 - Improved error handling and menu logic
 
 ## Usage
@@ -33,30 +34,47 @@ pip install pandas
 ```
 
 ## Example
-Input CSV:
+Input CSV e.g.(`sample.csv`):
 ```
-name, age, city, date
-Hamza ,20, Lahore, 2025-09-06
-Ali, 22 , Karachi, 09-06-2025
-```
-
-Output CSV:
-```
-Name,Age,City,Date
-Hamza,20,Lahore,06-09-25
-Ali,22,Karachi,06-09-25
+name,age,city,gender,date
+ Hamza,20,Lahore,Male,2025-09-06
+Hamza,20, Lahore ,Male,2025-09-06
+ali,22, Karachi,Male,2025-09-07
+Ayesha ,21, Lahore,Female,2025-09-09
+sara,19,islamabad,Female,2025-09-08
+Ayesha,21,lahore,Female,2025-09-09
 ```
 
-Quick Summary (printed and saved as summary.json):
+Output CSV (`cleaned.csv`):
+```
+Name,Age,City,Gender,Date
+Sara,19,Islamabad,Female,09-08-2025
+Hamza,20,Lahore,Male,06-09-2025
+Ali,22,Karachi,Male,07-09-2025
+Ayesha,21,Lahore,Female,09-09-2025
+```
+
+Quick Summary (printed and saved as `summary.json`):
 ```
 ----Quick Summary----
 ➡  Number of Rows:
- 2
+   4
 ➡  Average values:
-   Age: 21.0
-➡  Maximum Values:
-   Age: 22
+   age:    20.5
 ➡  Minimum Values:
-   Age: 20
+   age:    19
+➡  Age percentage:
+   19:    0.25 %
+   20:    0.25 %
+   22:    0.25 %
+   21:    0.25 %
+➡  Genders:
+   Female:    2
+   Male:    2
+➡  People in each city
+   Lahore:       2
+   Islamabad:       1
+   Karachi:       1
 ---------------------
 ```
+*Note: Age, gender, and city breakdowns only appear if those columns exist in your CSV.*
