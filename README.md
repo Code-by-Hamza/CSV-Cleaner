@@ -11,4 +11,4 @@ The tool automates common tasks such as removing duplicates, handling missing va
   An improved version of the CSV Cleaner using Object-Oriented Programming (OOP) principles for better code organization and scalability.  
 
   📌 Notes
-  - Each version folder may include its own README with specific instructions.
+  - Each version folder includes its own README with specific instructions.
